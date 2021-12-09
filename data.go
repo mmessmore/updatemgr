@@ -10,7 +10,15 @@ type Online struct {
 	TimeStamp int64  `json:"timestamp"`
 }
 
-func UnmarshallOnline(in []byte) *Online {
+func RedisGetOnline(hostName string) *Online {
+	o := Online{HostName: hostName}
+	ts, _ := RedisGetInt64(hostName)
+	o.TimeStamp = ts
+
+	return &o
+}
+
+func Unmarshall(in []byte) *Online {
 	o := Online{}
 	json.Unmarshal(in, &o)
 	return &o
@@ -28,6 +36,13 @@ type UpdatesAvailable struct {
 	HostName  string   `json:"hostname"`
 	TimeStamp int64    `json:"timestamp"`
 	Packages  []string `json:"packages"`
+}
+
+func RedisGetUpdatesAvailable(hostName string) *UpdatesAvailable {
+	res, _ := RedisGetBytes(hostName)
+	updatesAvailable := UnmarshallUpdatesAvailable(res)
+	updatesAvailable.HostName = hostName
+	return updatesAvailable
 }
 
 func UnmarshallUpdatesAvailable(in []byte) *UpdatesAvailable {
@@ -48,6 +63,13 @@ type RebootRequired struct {
 	HostName  string `json:"hostname"`
 	TimeStamp int64  `json:"timestamp"`
 	Required  bool   `json:"reqired"`
+}
+
+func RedisGetRebootRequired(hostName string) *RebootRequired {
+	res, _ := RedisGetBytes(hostName)
+	rebootRequired := UnmarshallRebootRequired(res)
+	rebootRequired.HostName = hostName
+	return rebootRequired
 }
 
 func UnmarshallRebootRequired(in []byte) *RebootRequired {

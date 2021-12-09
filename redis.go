@@ -37,11 +37,22 @@ func cleanupHook() {
 	}()
 }
 
-func RedisGet(key string) ([]byte, error) {
+func RedisGetBytes(key string) ([]byte, error) {
 	conn := Pool.Get()
 	defer conn.Close()
 	var data []byte
 	data, err := redis.Bytes(conn.Do("GET", key))
+	if err != nil {
+		return data, fmt.Errorf("error getting key %s: %v", key, err)
+	}
+	return data, err
+}
+
+func RedisGetInt64(key string) (int64, error) {
+	conn := Pool.Get()
+	defer conn.Close()
+	var data int64
+	data, err := redis.Int64(conn.Do("GET", key))
 	if err != nil {
 		return data, fmt.Errorf("error getting key %s: %v", key, err)
 	}
