@@ -1,12 +1,13 @@
 LOCAL_OS=$(shell go tool dist banner | grep 'Go' | cut -d' ' -f 4 | cut -d/ -f 1)
 LOCAL_ARCH=$(shell go tool dist banner | grep 'Go' | cut -d' ' -f 4 | cut -d/ -f 2)
+GO_FILES=$(shell find . -maxdepth 1 -name '*.go' | tr '\n' ' ')
+
+updatemgr: $(GO_FILES)
+	go build -o updatemgr
 
 .PHONY: run
 run: updatemgr
 	./updatemgr
-
-updatemgr: main.go
-	go build -o updatemgr
 
 .PHONY: release-local
 release-local: release/updatemgr.$(LOCAL_OS).$(LOCAL_ARCH)
@@ -34,7 +35,7 @@ release/updatemgr.darwin.amd64:
 
 .PHONY: pretty
 pretty:
-	find . -name "*.go" -print0 | xargs -0 gofmt -w
+	find . -name "*.go" -print0 | xargs -0 goimports -w
 
 .PHONY: clean
 clean:
