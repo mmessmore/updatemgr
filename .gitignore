@@ -17,3 +17,6 @@
 # binary output
 release/
 updatemgr
+
+# Makeism
+.pretty

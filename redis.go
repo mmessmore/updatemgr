@@ -10,6 +10,8 @@ import (
 )
 
 var Pool = newPool()
+var RedisKeyPrefix = "updatemgr:"
+var RedisDefaultTTl int = 500
 
 func newPool() *redis.Pool {
 	return &redis.Pool{
@@ -48,6 +50,17 @@ func RedisGetBytes(key string) ([]byte, error) {
 	return data, err
 }
 
+func RedisSetExString(key string, ttl int, value string) error {
+	conn := Pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SETEX", key, ttl, value)
+	if err != nil {
+		return fmt.Errorf("error setting key %s: %v", key, err)
+	}
+	return nil
+}
+
 func RedisGetInt64(key string) (int64, error) {
 	conn := Pool.Get()
 	defer conn.Close()
@@ -57,4 +70,15 @@ func RedisGetInt64(key string) (int64, error) {
 		return data, fmt.Errorf("error getting key %s: %v", key, err)
 	}
 	return data, err
+}
+
+func RedisSetExInt64(key string, ttl int, value int64) error {
+	conn := Pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SETEX", key, ttl, value)
+	if err != nil {
+		return fmt.Errorf("error setting key %s: %v", key, err)
+	}
+	return nil
 }
