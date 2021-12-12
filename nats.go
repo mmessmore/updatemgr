@@ -7,15 +7,15 @@ import (
 var nc, _ = nats.Connect(nats.DefaultURL)
 
 func publishOnline() {
-	nc.Publish("updatemgr.online", []byte(""))
+	nc.Publish("updatemgr.q.online", []byte(""))
 }
 
 func publishUpdatesAvailable() {
-	nc.Publish("updatemgr.updatesavailable", []byte(""))
+	nc.Publish("updatemgr.q.updatesavailable", []byte(""))
 }
 
 func publishRebootRequired() {
-	nc.Publish("updatemgr.rebootrequired", []byte(""))
+	nc.Publish("updatemgr.q.rebootrequired", []byte(""))
 }
 
 func ScheduledPublishers() {
@@ -25,6 +25,3 @@ func ScheduledPublishers() {
 	s.Delay().Minute(3).Do(publishUpdatesAvailable)
 	s.Delay().Minute(3).Do(publishRebootRequired)
 }
-
-
-
