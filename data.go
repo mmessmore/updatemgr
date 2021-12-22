@@ -84,7 +84,7 @@ func UnmarshallUpdatesAvailable(in []byte) *UpdatesAvailable {
 type RebootRequired struct {
 	HostName  string `json:"hostname"`
 	TimeStamp int64  `json:"timestamp"`
-	Required  bool   `json:"reqired"`
+	Required  bool   `json:"required"`
 }
 
 func (r RebootRequired) SetRebootRequired() error {

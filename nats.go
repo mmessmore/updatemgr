@@ -21,7 +21,7 @@ func publishRebootRequired() {
 func ScheduledPublishers() {
 	s, _ := scheduler.NewScheduler(1000)
 
-	s.Delay().Minute(3).Do(publishOnline)
-	s.Delay().Minute(3).Do(publishUpdatesAvailable)
-	s.Delay().Minute(3).Do(publishRebootRequired)
+	s.Every().Minute(3).Do(publishOnline)
+	s.Every().Minute(3).Do(publishUpdatesAvailable)
+	s.Every().Minute(3).Do(publishRebootRequired)
 }
