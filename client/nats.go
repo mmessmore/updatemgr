@@ -1,9 +1,9 @@
-package main
+package srv
 
 import (
 	"github.com/nats-io/nats.go"
-	"github.com/prprprus/scheduler"
 )
+
 var nc, _ = nats.Connect(nats.DefaultURL)
 
 func publishOnline() {
@@ -16,12 +16,4 @@ func publishUpdatesAvailable() {
 
 func publishRebootRequired() {
 	nc.Publish("updatemgr.q.rebootrequired", []byte(""))
-}
-
-func ScheduledPublishers() {
-	s, _ := scheduler.NewScheduler(1000)
-
-	s.Every().Minute(3).Do(publishOnline)
-	s.Every().Minute(3).Do(publishUpdatesAvailable)
-	s.Every().Minute(3).Do(publishRebootRequired)
 }

@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats
+  labels:
+    app: nats
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+      - image: nats
+        name: nats
+        ports:
+          - containerPort: 4222
+          - containerPort: 6222
+          - containerPort: 8222
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-service
+spec:
+  selector:
+    app: nats
+  ports:
+    - port: 4222
+      targetPort: 4222
+      name: nats
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: updatemgr
+  labels:
+    app: updatemgr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: updatemgr
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: updatemgr
+    spec:
+      containers:
+      - image: updatemgr
+        name: updatemgr
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: updatemgr-service
+spec:
+  selector:
+    app: updatemgr
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: updatemgr-ingress
+spec:
+  defaultBackend:
+    service:
+      name: updatemgr-service
+      port:
+        number: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: updatemgr-client
+  labels:
+    app: updatemgr-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: updatemgr-client
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: updatemgr-client
+    spec:
+      containers:
+      - image: updatemgr
+        name: updatemgr
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 8080
