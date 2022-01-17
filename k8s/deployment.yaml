@@ -55,6 +55,10 @@ spec:
       containers:
       - image: updatemgr
         name: updatemgr
+        args:
+          - "-n"
+          - "nats://nats:4222"
+          - "serve"
         imagePullPolicy: Never
         ports:
           - containerPort: 8080

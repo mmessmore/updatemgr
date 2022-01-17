@@ -21,7 +21,7 @@ func listen(port int) {
 
 	r.GET("/hosts", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"hosts": hosts,
+			"hosts": hosts.getHosts(),
 		})
 	})
 	r.Run(fmt.Sprintf(":%d", port))
