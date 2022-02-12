@@ -42,7 +42,7 @@ func GetUpdatesAvailable() UpdatesAvailable {
 		Packages: []string{},
 	}
 
-	//apt list --upgradeable| cut -d / -f1 > foo
+	// apt list --upgradeable| cut -d / -f1 > foo
 	// first line is garbage
 	out, err := exec.Command("apt", "list", "--upgradeable").Output()
 	if err != nil {
@@ -68,11 +68,36 @@ func GetUpdatesAvailable() UpdatesAvailable {
 
 }
 
-func Upgrade() error {
+func DoUpgrade() error {
 	log.Println("INFO performing upgrade")
 	err := exec.Command("apt-get", "upgrade", "-y").Run()
 	if err != nil {
 		log.Printf("ERROR upgrading packages: %v", err)
+	}
+	return err
+}
+
+func IsRebootRequired() RebootRequired {
+	log.Println("INFO checking if reboot is required")
+	hostname, _ := os.Hostname()
+	_, err := os.Stat("/var/run/reboot-required")
+	if err != nil {
+		return RebootRequired{
+			Name:           hostname,
+			RebootRequired: false,
+		}
+	}
+	return RebootRequired{
+		Name:           hostname,
+		RebootRequired: true,
+	}
+}
+
+func DoReboot() error {
+	log.Println("INFO performing reboot")
+	err := exec.Command("reboot").Run()
+	if err != nil {
+		log.Print("ERROR rebooting", err)
 	}
 	return err
 }

@@ -34,6 +34,7 @@ spec:
     - port: 4222
       targetPort: 4222
       name: nats
+  type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -57,7 +58,7 @@ spec:
         name: updatemgr
         args:
           - "-n"
-          - "nats://nats:4222"
+          - "nats://nats-service:4222"
           - "serve"
         imagePullPolicy: Never
         ports:
@@ -88,23 +89,27 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: updatemgr-client
+  name: updatemgr-agent
   labels:
-    app: updatemgr-client
+    app: updatemgr-agent
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: updatemgr-client
+      app: updatemgr-agent
   strategy: {}
   template:
     metadata:
       labels:
-        app: updatemgr-client
+        app: updatemgr-agent
     spec:
       containers:
       - image: updatemgr
         name: updatemgr
+        args:
+          - "-n"
+          - "nats://nats:-service4222"
+          - "agent"
         imagePullPolicy: Never
         ports:
           - containerPort: 8080

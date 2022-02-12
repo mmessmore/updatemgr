@@ -10,7 +10,7 @@ func RunServer(port int, ttl int, purge int, natsUrl string) {
 	go ScheduleAll(purge, ttl, nc)
 	Subscribe(nc)
 
-	RunWebServer(port)
+	RunWebServer(port, natsUrl)
 
 	defer nc.Drain()
 }

@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RunWebServer(port int) {
-	listen(port)
+func RunWebServer(port int, natsUrl string) {
+	listen(port, natsUrl)
 }
 
-func listen(port int) {
+func listen(port int, natsUrl string) {
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
@@ -20,6 +20,13 @@ func listen(port int) {
 	})
 
 	r.GET("/hosts", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"hosts": hosts.getHosts(),
+		})
+	})
+	r.GET("/refresh", func(c *gin.Context) {
+		nc := NatsConnect(natsUrl)
+		PublishQueries(nc)
 		c.JSON(200, gin.H{
 			"hosts": hosts.getHosts(),
 		})

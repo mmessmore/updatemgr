@@ -8,10 +8,17 @@ import (
 
 func NatsConnect(url string) *nats.Conn {
 	nc, err := nats.Connect(url)
+	log.Printf("INFO connecting to NATS at %s", url)
 	if err != nil {
-		log.Panicf("Failed to connect to nats: %v", err)
+		log.Panicf("FATAL Failed to connect to nats: %v", err)
 	}
 	return nc
+}
+
+func PublishQueries(nc *nats.Conn) {
+	publishOnline(nc)
+	publishUpdatesAvailable(nc)
+	publishRebootRequired(nc)
 }
 
 func publishOnline(nc *nats.Conn) {
