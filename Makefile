@@ -28,17 +28,17 @@ release: release/updatemgr.linux.arm release/updatemgr.darwin.amd64
 
 release/updatemgr.linux.amd64: .pretty $(GO_FILES)
 	mkdir -p release
-	GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o $@
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o $@
 	# upx --brute $@
 
 release/updatemgr.linux.arm: .pretty $(GO_FILES)
 	mkdir -p release
-	GOARCH=arm GOOS=linux go build -ldflags="-s -w" -o $@
+	CGO_ENABLED=0 GOARCH=arm GOOS=linux go build -ldflags="-s -w" -o $@
 	# upx --brute $@
 
 release/updatemgr.darwin.amd64: .pretty $(GO_FILES)
 	mkdir -p release
-	GOARCH=amd64 GOOS=darwin go build -ldflags="-s -w" -o $@
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="-s -w" -o $@
 	# upx --brute $@
 
 pretty: .pretty
