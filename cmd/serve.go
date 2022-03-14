@@ -18,9 +18,11 @@ var serveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		port, _ := cmd.Flags().GetInt("port")
 		ttl, _ := cmd.Flags().GetInt("ttl")
+		refresh, _ := cmd.Flags().GetInt("refresh")
 		purge, _ := cmd.Flags().GetInt("purge")
 		natsUrl, _ := cmd.Flags().GetString("nats-url")
-		srv.RunServer(port, ttl, purge, natsUrl)
+		debug, _ := cmd.Flags().GetBool("debug")
+		srv.RunServer(port, ttl, purge, refresh, natsUrl, debug)
 	},
 }
 
@@ -37,8 +39,12 @@ func init() {
 	// is called directly, e.g.:
 	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	serveCmd.Flags().IntP("port", "p", 8080, "Listen port for Web Server")
-	serveCmd.Flags().IntP("purge", "P", 3,
+	serveCmd.Flags().IntP("purge", "P", 5,
 		"Minutes between host purge intervals")
 	serveCmd.Flags().IntP("ttl", "t", 300,
 		"Seconds before host is considered offline")
+	serveCmd.Flags().IntP("refresh", "r", 30,
+		"Seconds between refreshing host data")
+	serveCmd.Flags().BoolP("debug", "d", false,
+		"Log at debug level")
 }

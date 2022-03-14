@@ -5,36 +5,32 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"log"
-
-	"github.com/mmessmore/updatemgr/agent"
+	"github.com/mmessmore/updatemgr/dummy"
 	"github.com/spf13/cobra"
 )
 
-// agentCmd represents the agent command
-var agentCmd = &cobra.Command{
-	Use:   "agent",
-	Short: "Host agent for update management",
+// dummyCmd represents the dummy command
+var dummyCmd = &cobra.Command{
+	Use:   "dummy",
+	Short: "Host dummy for update management",
 	Long:  `Agent that manages updates on host`,
 	Run: func(cmd *cobra.Command, args []string) {
 		natsUrl, _ := cmd.Flags().GetString("nats-url")
-		nc := agent.NatsConnect(natsUrl)
-		agent.Subscribe(nc)
-		log.Println("ERROR: Exiting unnaturally")
+		dummy.NatsConnect(natsUrl)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(agentCmd)
+	rootCmd.AddCommand(dummyCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// agentCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// dummyCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// agentCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// dummyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 }

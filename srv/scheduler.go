@@ -1,24 +1,27 @@
 package srv
 
 import (
+	"time"
+
 	"github.com/nats-io/nats.go"
-	"github.com/prprprus/scheduler"
+	"github.com/rs/zerolog/log"
 )
 
-func ScheduleAll(purgeInterval int, ttl int, nc *nats.Conn) {
-	s, _ := scheduler.NewScheduler(1000)
-	ScheduledPublishers(s, purgeInterval, nc)
-	// SchedulePurge(s, purgeInterval, ttl)
+// TODO: this is broken
+// Fast loop after initial wait
+func ScheduleAll(purgeInterval int, refresh int, ttl int, nc *nats.Conn) {
+	go func() {
+		for {
+			publishAllScheduled(nc)
+			time.Sleep(time.Duration(ttl) * time.Second)
+		}
+	}()
 }
 
-func ScheduledPublishers(s *scheduler.Scheduler, purgeInterval int, nc *nats.Conn) {
-	s.Every().Minute(purgeInterval).Do(publishOnline, nc)
-	s.Every().Minute(purgeInterval).Do(publishUpdatesAvailable, nc)
-	s.Every().Minute(purgeInterval).Do(publishRebootRequired, nc)
+func publishAllScheduled(nc *nats.Conn) {
+	log.Info().
+		Msg("Publishing scheduled queries")
+	PublishOnline(nc)
+	PublishUpdatesAvailable(nc)
+	PublishRebootRequired(nc)
 }
-
-/*
-func SchedulePurge(s *scheduler.Scheduler, purgeInterval int, ttl int) {
-	s.Every().Minute(purgeInterval).Do(Purge, ttl)
-}
-*/

@@ -108,7 +108,7 @@ spec:
         name: updatemgr
         args:
           - "-n"
-          - "nats://nats:-service4222"
+          - "nats://nats-service:4222"
           - "agent"
         imagePullPolicy: Never
         ports:

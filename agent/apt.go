@@ -1,27 +1,33 @@
 package agent
 
 import (
-	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog/log"
 )
 
 var updateTTL = 6 * 3600
 
 func getUpdates() {
-	log.Println("INFO updating apt cache")
+	log.Info().
+		Msg("Updating apt cache")
 	err := exec.Command("apt-get", "update").Run()
 	if err != nil {
-		log.Printf("ERROR updating apt: %v", err)
+		log.Error().
+			Err(err).
+			Msg("Failed updating apt")
 	}
 }
 
 func upToDate() bool {
 	fInfo, err := os.Stat("/var/cache/apt/pkgcache.bin")
 	if err != nil {
-		log.Printf("ERROR opening apt cache: %v", err)
+		log.Error().
+			Err(err).
+			Msg("Updating apt cache")
 		return false
 	}
 	modTime := fInfo.ModTime().Unix()
@@ -31,7 +37,8 @@ func upToDate() bool {
 }
 
 func GetUpdatesAvailable() UpdatesAvailable {
-	log.Println("INFO finding available updates")
+	log.Info().
+		Msg("Finding updates")
 	if !upToDate() {
 		getUpdates()
 	}
@@ -46,7 +53,9 @@ func GetUpdatesAvailable() UpdatesAvailable {
 	// first line is garbage
 	out, err := exec.Command("apt", "list", "--upgradeable").Output()
 	if err != nil {
-		log.Printf("ERROR getting upgradable packages: %v", err)
+		log.Error().
+			Err(err).
+			Msg("Getting upgradable packages")
 	}
 
 	outLines := strings.Split(string(out), "\n")
@@ -62,23 +71,37 @@ func GetUpdatesAvailable() UpdatesAvailable {
 		ua.Packages = append(ua.Packages, pkg)
 	}
 
-	log.Printf("Updates Available\n%s", ua.Marshall())
+	log.Info().
+		Strs("packages", ua.Packages).
+		Msg("Found upgradable packages")
 
 	return ua
 
 }
 
 func DoUpgrade() error {
-	log.Println("INFO performing upgrade")
-	err := exec.Command("apt-get", "upgrade", "-y").Run()
+	log.Info().Msg("Performing upgrade")
+	err := exec.Command("apt-get", "full-upgrade", "-y").Run()
 	if err != nil {
-		log.Printf("ERROR upgrading packages: %v", err)
+		log.Error().
+			Err(err).
+			Msg("Failed upgrading packages")
 	}
+	log.Print("Finished upgrade")
+
+	log.Print("Performing autoremove")
+	err = exec.Command("apt-get", "autoremove", "-y").Run()
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed running autoremove")
+	}
+	log.Print("Finished autoremove")
 	return err
 }
 
 func IsRebootRequired() RebootRequired {
-	log.Println("INFO checking if reboot is required")
+	log.Print("Checking if reboot is required")
 	hostname, _ := os.Hostname()
 	_, err := os.Stat("/var/run/reboot-required")
 	if err != nil {
@@ -94,10 +117,12 @@ func IsRebootRequired() RebootRequired {
 }
 
 func DoReboot() error {
-	log.Println("INFO performing reboot")
+	log.Print("Performing reboot NOW!!!")
 	err := exec.Command("reboot").Run()
 	if err != nil {
-		log.Print("ERROR rebooting", err)
+		log.Error().
+			Err(err).
+			Msg("Failed rebooting")
 	}
 	return err
 }

@@ -3,7 +3,6 @@ package srv
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 )
 
 type Host struct {
@@ -11,18 +10,6 @@ type Host struct {
 	Online           Online           `json:"online"`
 	UpdatesAvailable UpdatesAvailable `json:"updates_available"`
 	RebootRequired   RebootRequired   `json:"reboot_required"`
-}
-
-func PurgeHosts(hosts []Host, ttl int) {
-	oldest := time.Now().Unix() - int64(ttl)
-
-	n := 0
-	for _, h := range hosts {
-		if h.Online.TimeStamp < oldest {
-			hosts[n] = h
-			n++
-		}
-	}
 }
 
 /*

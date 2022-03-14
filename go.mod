@@ -3,11 +3,12 @@ module github.com/mmessmore/updatemgr
 go 1.17
 
 require (
+	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.7
-	github.com/gomodule/redigo v1.8.6
 	github.com/nats-io/nats.go v1.13.1-0.20211122170419-d7c1d78a50fc
-	github.com/prprprus/scheduler v0.5.0
 	github.com/spf13/cobra v1.3.0
+	github.com/spf13/viper v1.10.1
 )
 
 require (
@@ -30,14 +31,14 @@ require (
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
+	github.com/rs/zerolog v1.26.1 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.10.1 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
-	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
+	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
