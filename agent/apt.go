@@ -103,16 +103,16 @@ func DoUpgrade() error {
 func IsRebootRequired() RebootRequired {
 	log.Print("Checking if reboot is required")
 	hostname, _ := os.Hostname()
+	rebootRequired := false
+
+	// if the reboot-required file exists we need it
 	_, err := os.Stat("/var/run/reboot-required")
 	if err != nil {
-		return RebootRequired{
-			Name:           hostname,
-			RebootRequired: false,
-		}
+		rebootRequired = true
 	}
 	return RebootRequired{
 		Name:           hostname,
-		RebootRequired: true,
+		RebootRequired: rebootRequired,
 	}
 }
 
