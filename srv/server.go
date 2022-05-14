@@ -17,7 +17,7 @@ func RunServer(
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 
-	hosts = InitMemoryStore()
+	hosts = InitBoltStore("./updatemgr.db")
 
 	nc := NatsConnect(natsUrl)
 	// TODO: this is broken

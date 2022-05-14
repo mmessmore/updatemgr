@@ -29,6 +29,7 @@
 {/if}
 {#if typeof promise !== 'undefined'}
 {#await promise}
+waiting...
 {:then text}
 <p>{text}</p>
 {:catch error}

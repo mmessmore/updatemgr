@@ -3,6 +3,8 @@ package srv
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/rs/zerolog/log"
 )
 
 type Host struct {
@@ -10,6 +12,25 @@ type Host struct {
 	Online           Online           `json:"online"`
 	UpdatesAvailable UpdatesAvailable `json:"updates_available"`
 	RebootRequired   RebootRequired   `json:"reboot_required"`
+}
+
+func (h Host) Marshall() []byte {
+	var out = []byte("")
+	out, err := json.Marshal(h)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("host", h.Name).
+			Msg("Error marshalling to JSON")
+	}
+
+	return out
+}
+
+func UnmarshallHost(in []byte) *Host {
+	h := Host{}
+	json.Unmarshal(in, &h)
+	return &h
 }
 
 /*

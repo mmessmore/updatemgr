@@ -2,7 +2,7 @@
 	import Reboot from './Reboot.svelte';
 	import Update from './Update.svelte';
 
-	let baseUrl = "http://192.168.39.65:31042"
+	let baseUrl = "";
 
 	async function getHosts() {
 		let stringy = "";
@@ -37,14 +37,16 @@ waiting...
 {#if host['reboot_required']['reboot_required'] }
 <Reboot reboot_data={host['reboot_required']} baseUrl={baseUrl} />
 {/if}
+<h3>Updates Available</h3>
 {#if host['updates_available']['packages'].length > 0 }
-	<h3>Updates Available</h3>
 	<Update baseUrl={baseUrl} hostname={host['name']}/>
 	<ul class="pkgs">
 		{#each host['updates_available']['packages'] as pkg}
 		<li class="pkg">{pkg}</li>
 		{/each}
 	</ul>
+{:else}
+	<p>No updates available.</p>
 {/if}
 </div>
 {/each}
