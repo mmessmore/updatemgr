@@ -1,9 +1,8 @@
 <script>
 	export let hostname = {};
-	export let baseUrl = "";
 
 	async function callUpdate() {
-		let res = await fetch(`${baseUrl}/upgrade/${hostname}`,{
+		let res = await fetch(`./upgrade/${hostname}`,{
 			method: "POST"
 		});
 		let text = await res.text();

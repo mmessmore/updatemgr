@@ -2,11 +2,10 @@
 	import Reboot from './Reboot.svelte';
 	import Update from './Update.svelte';
 
-	let baseUrl = "";
 
 	async function getHosts() {
 		let stringy = "";
-		let url = `${baseUrl}/hosts`;
+		let url = `./hosts`;
 		const hostsRes = await fetch(url,{
 			cache: "no-cache",
 			mode: "cors",
@@ -14,6 +13,9 @@
 		});
 
 		let data = await hostsRes.json();
+		for (const key in data['hosts']) {
+			data.hosts[key]['date'] = new Date(data.hosts[key]['online']['timestamp'] * 1000);
+		}
 		return data;
 	}
 
@@ -21,7 +23,6 @@
 
 	// refresh every 30 seconds
 	setInterval(() => {
-		console.log("refreshing...");
 		hosts = getHosts();
 	}, 30000);
 </script>
@@ -33,13 +34,14 @@ waiting...
 <div class="box-container">
 {#each data['hosts'] as host}
 <div class="box">
-<h2>{host['name']}</h2>
+	<h2>{host['name']}</h2>
+	<p>Last check-in {host['date'].toLocaleString()}</p>
 {#if host['reboot_required']['reboot_required'] }
-<Reboot reboot_data={host['reboot_required']} baseUrl={baseUrl} />
+<Reboot reboot_data={host['reboot_required']} />
 {/if}
 <h3>Updates Available</h3>
 {#if host['updates_available']['packages'].length > 0 }
-	<Update baseUrl={baseUrl} hostname={host['name']}/>
+	<Update hostname={host['name']}/>
 	<ul class="pkgs">
 		{#each host['updates_available']['packages'] as pkg}
 		<li class="pkg">{pkg}</li>

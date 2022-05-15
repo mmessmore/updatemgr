@@ -1,12 +1,11 @@
 <script>
 	export let reboot_data = {};
-	export let baseUrl = "";
 
 	let hostname = reboot_data['name'];
 	let required = reboot_data['reboot_required'];
 
 	async function callUpdate() {
-		let res = fetch(`${baseUrl}/reboot/${hostname}`,{
+		let res = fetch(`./reboot/${hostname}`,{
 			method: "POST"
 		});
 		return res;
