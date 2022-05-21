@@ -12,8 +12,8 @@ import (
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Run web interface",
-	Long:  `Run web-based interface for updatemgr`,
+	Short: "Run Server",
+	Long:  `Run server with web-based interface for updatemgr`,
 	//TODO: make this serve stuff
 	Run: func(cmd *cobra.Command, args []string) {
 		port, _ := cmd.Flags().GetInt("port")
@@ -38,7 +38,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	serveCmd.Flags().IntP("port", "p", 8080, "Listen port for Web Server")
+	serveCmd.Flags().IntP("port", "p", 1138, "Listen port for Web Server")
 	serveCmd.Flags().IntP("purge", "P", 5,
 		"Minutes between host purge intervals")
 	serveCmd.Flags().IntP("ttl", "t", 300,

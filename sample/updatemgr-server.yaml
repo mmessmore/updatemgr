@@ -1,0 +1,2 @@
+nats-url: "nats://lobster.messmore.local:4222"
+port: 1138

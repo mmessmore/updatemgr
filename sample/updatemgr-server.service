@@ -1,0 +1,14 @@
+[Unit]
+Description=Package Updaterator Management Server
+After=network.target
+
+[Service]
+User=updatemgr
+Group=updatemgr
+ExecStart=/usr/local/bin/updatemgr -c /usr/local/etc/updatemgr/updatemgr.yml serve
+WorkingDirectory=/var/lib/updatemgr
+KillMode=control-group
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
