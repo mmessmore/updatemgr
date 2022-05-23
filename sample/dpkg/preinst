@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if getent passwd updatemgr >/dev/null 2>&1; then
+	exit 0
+fi
+
+useradd --comment 'updatemgr server user' \
+		--home-dir /var/lib/updatemgr \
+	    --no-create-home \
+		--shell /usr/sbin/nologin \
+		--system \
+		--user-group \
+		updatemgr

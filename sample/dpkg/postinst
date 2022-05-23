@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# fix ownership of run directory
+chown --recursive updatemgr:updatemgr /var/lib/updatemgr
+
+# copy example configs only if real ones do not exist
+for c in /etc/updatemgr/*.example; do
+	real="${c%.*}"
+	if ! [ -f "$real" ]; then
+		cp "$c" "$real"
+	fi
+done
+
+# make sure systemd has the units loaded
+systemctl daemon-reload
+
+for s in agent server; do
+	if systemctl is-enabled "updatemgr-${s}.service" >/dev/null; then
+		systemctl restart "updatemgr-${s}.service"
+	fi
+done

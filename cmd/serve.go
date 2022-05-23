@@ -7,20 +7,36 @@ package cmd
 import (
 	"github.com/mmessmore/updatemgr/srv"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Run web interface",
-	Long:  `Run web-based interface for updatemgr`,
-	//TODO: make this serve stuff
+	Short: "Run Server",
+	Long:  `Run server with web-based interface for updatemgr`,
+	//TODO: Fix viper + cobra to not be backwards
 	Run: func(cmd *cobra.Command, args []string) {
-		port, _ := cmd.Flags().GetInt("port")
-		ttl, _ := cmd.Flags().GetInt("ttl")
-		refresh, _ := cmd.Flags().GetInt("refresh")
-		purge, _ := cmd.Flags().GetInt("purge")
-		natsUrl, _ := cmd.Flags().GetString("nats-url")
+		port := viper.GetInt("port")
+		if port == 0 {
+			port, _ = cmd.Flags().GetInt("port")
+		}
+		ttl := viper.GetInt("ttl")
+		if ttl == 0 {
+			ttl, _ = cmd.Flags().GetInt("ttl")
+		}
+		refresh := viper.GetInt("refresh")
+		if refresh == 0 {
+			refresh, _ = cmd.Flags().GetInt("refresh")
+		}
+		purge := viper.GetInt("purge")
+		if purge == 0 {
+			purge, _ = cmd.Flags().GetInt("purge")
+		}
+		natsUrl := viper.GetString("nats-url")
+		if natsUrl == "" {
+			natsUrl, _ = cmd.Flags().GetString("nats-url")
+		}
 		debug, _ := cmd.Flags().GetBool("debug")
 		srv.RunServer(port, ttl, purge, refresh, natsUrl, debug)
 	},
@@ -38,7 +54,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	serveCmd.Flags().IntP("port", "p", 8080, "Listen port for Web Server")
+	serveCmd.Flags().IntP("port", "p", 1138, "Listen port for Web Server")
 	serveCmd.Flags().IntP("purge", "P", 5,
 		"Minutes between host purge intervals")
 	serveCmd.Flags().IntP("ttl", "t", 300,
