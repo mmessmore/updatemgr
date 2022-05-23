@@ -12,18 +12,6 @@ build-static:
 run: updatemgr
 	./updatemgr serve
 
-.PHONY: docker
-docker: release/updatemgr.linux.amd64
-	docker build -t updatemgr:latest .
-
-.PHONY: docker-clean
-docker-clean:
-	docker image prune -f
-
-.PHONY: release-local
-release-local: release/updatemgr.$(LOCAL_OS).$(LOCAL_ARCH)
-
-.PHONY: dist
 dist: release/updatemgr.linux.arm \
 	release/updatemgr.linux.arm64 \
 	release/updatemgr.linux.amd64
@@ -35,22 +23,34 @@ release/updatemgr.linux.amd64: export CGO_ENABLED = 0
 release/updatemgr.linux.amd64: export GOARCH = amd64
 release/updatemgr.linux.amd64: export GOOS = linux
 release/updatemgr.linux.amd64: .pretty $(GO_FILES) build-static release
-	go build -ldflags="-s -w" -o $@
-	# upx --brute $@
+	@# I'm not sure why this isn't working right
+	if ! [ -f $@ ]; then \
+		go build -ldflags="-s -w" -o $@; \
+	else \
+		echo skipping build; \
+	fi
 
 release/updatemgr.linux.arm: export CGO_ENABLED = 0
 release/updatemgr.linux.arm: export GOARCH = arm
 release/updatemgr.linux.arm: export GOOS = linux
 release/updatemgr.linux.arm: .pretty $(GO_FILES) build-static release
-	go build -ldflags="-s -w" -o $@
-	#upx --brute $@
+	@# Compress for tiny computers
+	@# I'm not sure why this isn't working right
+	if ! [ -f $@ ]; then\
+		go build -ldflags="-s -w" -o $@; \
+		upx --brute $@; \
+	fi
 
 release/updatemgr.linux.arm64: export CGO_ENABLED = 0
 release/updatemgr.linux.arm64: export GOARCH = arm64
 release/updatemgr.linux.arm64: export GOOS = linux
 release/updatemgr.linux.arm64: .pretty $(GO_FILES) build-static release
-	go build -ldflags="-s -w" -o $@
-	#upx --brute $@
+	@# Compress for tiny computers
+	@# I'm not sure why this isn't working right
+	if ! [ -f $@ ]; then\
+		go build -ldflags="-s -w" -o $@; \
+		upx --brute $@; \
+	fi
 
 pretty: .pretty
 
@@ -58,13 +58,13 @@ pretty: .pretty
 	find . -name "*.go" -print0 | xargs -0 goimports -w
 	touch .pretty
 
-.PHONY: rek8s
-rek8s: docker
-	$(MAKE) -C k8s clean deploy
+.PHONY: package
+package: release/updatemgr.linux.amd64 \
+	release/updatemgr.linux.arm \
+	release/updatemgr.linux.arm64
 
-.PHONY: deploy
-deploy: release/updatemgr.linux.arm64
-	scp release/updatemgr.linux.arm64 lobster:~/
+	sample/create_dpkg.sh
+
 
 .PHONY: clean
 clean:

@@ -1,0 +1,6 @@
+Package: updatemgr
+Version: VERSION
+Architecture: DEB_ARCH
+Maintainer: Mike Messmore <mike@messmore.org>
+Description: Manage debian-based updates (client and server)
+ A pub/sub system to manage apt updates across a fleet of systems.

@@ -9,6 +9,7 @@ import (
 
 	"github.com/mmessmore/updatemgr/agent"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // agentCmd represents the agent command
@@ -17,7 +18,10 @@ var agentCmd = &cobra.Command{
 	Short: "Host agent for update management",
 	Long:  `Agent that manages updates on host`,
 	Run: func(cmd *cobra.Command, args []string) {
-		natsUrl, _ := cmd.Flags().GetString("nats-url")
+		natsUrl := viper.GetString("nats-url")
+		if natsUrl == "" {
+			natsUrl, _ = rootCmd.Flags().GetString("nats-url")
+		}
 		nc := agent.NatsConnect(natsUrl)
 		agent.Subscribe(nc)
 		log.Println("ERROR: Exiting unnaturally")
@@ -36,5 +40,4 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// agentCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
 }

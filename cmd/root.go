@@ -32,9 +32,6 @@ func Execute() {
 }
 
 func init() {
-
-	cobra.OnInitialize(initConfig)
-
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
@@ -46,6 +43,8 @@ func init() {
 		"config file (default is $HOME/.updatemgr.yaml)")
 	rootCmd.PersistentFlags().StringP("nats-url", "n",
 		"nats://localhost:4222", "URL for NATS")
+	cobra.OnInitialize(initConfig)
+	viper.BindPFlags(rootCmd.Flags())
 }
 
 func initConfig() {
