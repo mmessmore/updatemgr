@@ -55,6 +55,7 @@ accompanying PR.  I'll probably be slow to respond.
 - [ ] Needs authentication around the front-end
 - [ ] Missing any testing
 - [ ] Missing Actions for testing and maintaining library updates
+- [ ] Remove Docker/k8s stuff.  That was just me goofing around
 
 ## WARNING
 
