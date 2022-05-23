@@ -41,7 +41,7 @@ service on upgrade.
 
 ## CONTRIBUTING
 
-I'll take most contributions.  The [MIT LICENSE](./LICENSE] is not negotiable,
+I'll take most contributions.  The [MIT LICENSE](./LICENSE) is not negotiable,
 so please don't ask.
 
 This is a total side-project.  Issues will likely be ignored without an
