@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Mike Messmore <mike@messmore.org>
 
 */
 package cmd
@@ -17,43 +17,14 @@ var serveCmd = &cobra.Command{
 	Long:  `Run server with web-based interface for updatemgr`,
 	//TODO: Fix viper + cobra to not be backwards
 	Run: func(cmd *cobra.Command, args []string) {
-		port := viper.GetInt("port")
-		if port == 0 {
-			port, _ = cmd.Flags().GetInt("port")
-		}
-		ttl := viper.GetInt("ttl")
-		if ttl == 0 {
-			ttl, _ = cmd.Flags().GetInt("ttl")
-		}
-		refresh := viper.GetInt("refresh")
-		if refresh == 0 {
-			refresh, _ = cmd.Flags().GetInt("refresh")
-		}
-		purge := viper.GetInt("purge")
-		if purge == 0 {
-			purge, _ = cmd.Flags().GetInt("purge")
-		}
-		natsUrl := viper.GetString("nats-url")
-		if natsUrl == "" {
-			natsUrl, _ = cmd.Flags().GetString("nats-url")
-		}
-		debug, _ := cmd.Flags().GetBool("debug")
-		srv.RunServer(port, ttl, purge, refresh, natsUrl, debug)
+		ConfigureLogger()
+		sc := ConfigServer()
+		sc.RunServer()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// serveCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	serveCmd.Flags().IntP("port", "p", 1138, "Listen port for Web Server")
 	serveCmd.Flags().IntP("purge", "P", 5,
 		"Minutes between host purge intervals")
@@ -61,6 +32,15 @@ func init() {
 		"Seconds before host is considered offline")
 	serveCmd.Flags().IntP("refresh", "r", 30,
 		"Seconds between refreshing host data")
-	serveCmd.Flags().BoolP("debug", "d", false,
-		"Log at debug level")
+	viper.BindPFlags(serveCmd.Flags())
+}
+
+func ConfigServer() *srv.ServerConfig {
+	return &srv.ServerConfig{
+		NatsUrl: viper.GetString("nats-url"),
+		Port:    viper.GetInt("port"),
+		Purge:   viper.GetInt("purge"),
+		Refresh: viper.GetInt("refresh"),
+		Ttl:     viper.GetInt("ttl"),
+	}
 }

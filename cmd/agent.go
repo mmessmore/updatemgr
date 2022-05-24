@@ -1,6 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
+Copyright © 2022 Mike Messmore <mike@messmore.org>
 */
 package cmd
 
@@ -18,10 +17,8 @@ var agentCmd = &cobra.Command{
 	Short: "Host agent for update management",
 	Long:  `Agent that manages updates on host`,
 	Run: func(cmd *cobra.Command, args []string) {
+		ConfigureLogger()
 		natsUrl := viper.GetString("nats-url")
-		if natsUrl == "" {
-			natsUrl, _ = rootCmd.Flags().GetString("nats-url")
-		}
 		nc := agent.NatsConnect(natsUrl)
 		agent.Subscribe(nc)
 		log.Println("ERROR: Exiting unnaturally")
@@ -30,14 +27,4 @@ var agentCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(agentCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// agentCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// agentCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

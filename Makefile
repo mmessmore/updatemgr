@@ -56,6 +56,7 @@ pretty: .pretty
 
 .pretty: $(GO_FILES)
 	find . -name "*.go" -print0 | xargs -0 goimports -w
+	god mod tidy
 	touch .pretty
 
 .PHONY: package

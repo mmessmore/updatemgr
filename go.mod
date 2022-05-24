@@ -3,6 +3,7 @@ module github.com/mmessmore/updatemgr
 go 1.17
 
 require (
+	github.com/dn365/gin-zerolog v0.0.0-20171227063204-b43714b00db1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.7
@@ -11,6 +12,7 @@ require (
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.10.1
 	go.etcd.io/bbolt v1.3.6
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require (
