@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Copyright 2022 Mike Messmore <mike@messmore.org>
+
+# Script to generate .deb packages for updatemgr
+# This probably assumes too much about the project to be generic
+
 prog=${0##*/}
 
 SW=updatemgr
@@ -85,6 +90,7 @@ if ! command -v dpkg-deb >/dev/null 2>&1; then
 	exit $ENOENT
 fi
 
+# check for array membership
 array_contains() {
   local e match="$1"
   shift
@@ -94,6 +100,7 @@ array_contains() {
   return 1
 }
 
+# create our filesystem layout in the temp directory
 make_layout() {
 	if ! cd "$tdir"; then
 		error "Could not \`cd' to temp directory"
@@ -106,6 +113,7 @@ make_layout() {
 	mkdir DEBIAN
 }
 
+# copy the executable in place
 copy_bin() {
 	BIN_FILE="release/${SW}.linux.${GO_ARCH}"
 	if ! [ -f "$BIN_FILE" ]; then
@@ -115,10 +123,12 @@ copy_bin() {
 	install -m 0755 "$BIN_FILE" "${tdir}/usr/bin/updatemgr"
 }
 
+# copy all of the systemd units in place
 copy_systemd() {
 	install -m 0644 sample/*.service "${tdir}/usr/lib/systemd/system/"
 }
 
+# copy the sample config in place
 copy_config() {
 	for c in sample/*.yaml; do
 		f=${c##*/}
@@ -126,17 +136,22 @@ copy_config() {
 	done
 }
 
+# copy our control file and scripts in place
 copy_control() {
 	m4 -D VERSION="$VERSION" -D DEB_ARCH="$DEB_ARCH" sample/dpkg/control.in > \
 		"${tdir}/DEBIAN/control"
 	cp sample/dpkg/* "${tdir}/DEBIAN/"
 }
 
+# actually build the package
 build_dpkg() {
 	dpkg-deb --build --root-owner-group "$tdir" \
 		"release/updatemgr_${VERSION}_${DEB_ARCH}.deb"
 }
 
+# generate a version number
+# for the 'main' branch, use the last tag
+# for the 'dev' branch tack a datestamp after the last tag
 get_version() {
 	local version
 	version="$(git tag |tail -n 1| tr -d v)"
@@ -159,12 +174,14 @@ get_version() {
 	echo "${version}-${REV}"
 }
 
+# function to cleanup temp dirs on exit
 cleanup() {
 	for temp in "${TDIRS[@]}"; do
 		rm -fr "$temp"
 	done
 }
 
+# set our version number
 VERSION=$(get_version)
 
 # empty or "all" gets all the arches
@@ -175,6 +192,9 @@ elif array_contains all "${ARCHES[@]}"; then
 fi
 
 echo "${prog}: Building packages for ${ARCHES[*]}"
+
+# go ahead and reserve an array for temp dirs and set the cleanup
+# trap
 TDIRS=()
 trap 'cleanup' EXIT
 
@@ -183,11 +203,14 @@ for ARCH in "${ARCHES[@]}"; do
 	echo "********************************"
 	echo "* Building package for ${ARCH} *"
 	echo "********************************"
+
+	# make the temp directory and make sure we add it to the cleanup list
 	tdir=$(mktemp -d "${prog}.XXXXXX")
 	export tdir
 	TDIRS+=("$tdir")
 
-	# translate architecture values to debian names
+	# translate architecture values to debian and golang names
+	# try to be forgiving on these.  The variation is obnoxious
 	case "$ARCH" in
 		x86_64|amd64)
 			export DEB_ARCH=amd64
@@ -207,10 +230,12 @@ for ARCH in "${ARCHES[@]}"; do
 			;;
 	esac
 
-	# do this in a subshell
+	# do this in a subshell, since we cd, and handle it messing up
 	(
 		make_layout
-	)
+	) || { error "Skipping ${ARCH}"; continue }
+
+	# walk the steps to build the package
 	copy_bin
 	copy_systemd
 	copy_config
