@@ -139,7 +139,7 @@ build_dpkg() {
 
 get_version() {
 	local version
-	version="$(git tag | tr -d v)"
+	version="$(git tag |tail -n 1| tr -d v)"
 	if [ -z "$version" ]; then
 		error "No git tag to determine version"
 		exit $ENOENT
@@ -159,6 +159,12 @@ get_version() {
 	echo "${version}-${REV}"
 }
 
+cleanup() {
+	for temp in "${TDIRS[@]}"; do
+		rm -fr "$temp"
+	done
+}
+
 VERSION=$(get_version)
 
 # empty or "all" gets all the arches
@@ -169,6 +175,8 @@ elif array_contains all "${ARCHES[@]}"; then
 fi
 
 echo "${prog}: Building packages for ${ARCHES[*]}"
+TDIRS=()
+trap 'cleanup' EXIT
 
 # Now go build packages for every architecture
 for ARCH in "${ARCHES[@]}"; do
@@ -177,7 +185,7 @@ for ARCH in "${ARCHES[@]}"; do
 	echo "********************************"
 	tdir=$(mktemp -d "${prog}.XXXXXX")
 	export tdir
-	trap 'rm -fr "$tdir"' EXIT
+	TDIRS+=("$tdir")
 
 	# translate architecture values to debian names
 	case "$ARCH" in
