@@ -1,3 +1,6 @@
+/*
+Copyright © 2022 Mike Messmore <mike@messmore.org>
+*/
 package srv
 
 import (
@@ -6,6 +9,7 @@ import (
 	"io/fs"
 	"net/http"
 
+	ginzerolog "github.com/dn365/gin-zerolog"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -50,16 +54,13 @@ func listen(port int, nc *nats.Conn) {
 
 	r := gin.Default()
 
-	// TODO: remove when real
 	// ignore cors for now
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	r.Use(cors.New(config))
 
-	// this should redirect to the front-end
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.Redirect(http.StatusMovedPermanently, "/static/index.html")
-	// })
+	// use zerolog for Gin too
+	r.Use(ginzerolog.Logger("gin"))
 
 	// Simple ping/pong
 	r.GET("/ping", func(c *gin.Context) {

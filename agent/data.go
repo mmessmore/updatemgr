@@ -1,3 +1,6 @@
+/*
+Copyright © 2022 Mike Messmore <mike@messmore.org>
+*/
 package agent
 
 import (
