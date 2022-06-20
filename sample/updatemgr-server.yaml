@@ -1,2 +1,7 @@
-nats-url: "nats://lobster.messmore.local:4222"
+nats-url: "nats://localhost:4222"
 port: 1138
+log-file: /var/log/updatemgr/updatemgr.log
+# log-backups: 5
+# log-level: INFO
+# log-max-age: 5
+# log-max-size: 10

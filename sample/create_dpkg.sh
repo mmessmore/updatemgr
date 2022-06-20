@@ -231,9 +231,10 @@ for ARCH in "${ARCHES[@]}"; do
 	esac
 
 	# do this in a subshell, since we cd, and handle it messing up
-	(
-		make_layout
-	) || { error "Skipping ${ARCH}"; continue }
+	if ! ( make_layout); then
+		echo "couldn't make layout for ${DEB_ARCH}, continuing"
+		continue
+	fi
 
 	# walk the steps to build the package
 	copy_bin

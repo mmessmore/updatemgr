@@ -63,7 +63,7 @@ pretty: .pretty
 # Force formatting of go files, and tidy go mod stuff
 .pretty: $(GO_FILES)
 	find . -name "*.go" -print0 | xargs -0 goimports -w
-	god mod tidy
+	go mod tidy
 	touch .pretty
 
 # make our packages

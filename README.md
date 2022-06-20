@@ -49,7 +49,7 @@ accompanying PR.  I'll probably be slow to respond.
 
 ## KNOWN ISSUES
 
-- [ ] Default config in package is for my home setup
+- [ ] logging config is broken
 - [ ] Likely has front-end UI bugs and is ugly
 - [ ] Needs authentication around the front-end
 - [ ] Missing any testing

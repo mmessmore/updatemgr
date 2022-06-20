@@ -3,6 +3,9 @@
 # fix ownership of run directory
 chown --recursive updatemgr:updatemgr /var/lib/updatemgr
 
+# make log directory
+mkdir -p /var/log/updatemgr
+
 # copy example configs only if real ones do not exist
 for c in /etc/updatemgr/*.example; do
 	real="${c%.*}"
